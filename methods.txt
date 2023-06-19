@@ -1,0 +1,22 @@
+io.on('connection', callback)  --- connect ever user to a  single server 
+
+socket.on('name', callback)  --- recieve message(by the server) from a user
+
+socket.emit('name', values)  --- send message to a user
+
+io.emit('name', values)  --- send message to every user
+
+socket.broadcast.emit('name', values)  --- send messages to every user expect the one sending message
+
+socket.on('disconnect', callback)  --- runs when a user is disconnected
+
+socket.join(roomname)  --- join a room
+
+io.to.emit --- sends messages to everyone in the same room
+
+socket.broadcast.to.emit  --- sends messages to everyone accept the user in a specific chat
+
+
+
+in acknowledgements
+-> while emitting we define a callback function which is then accepted and called in the reciever's end
