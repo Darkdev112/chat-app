@@ -6,9 +6,9 @@ const cors = require('cors')
 
 // const app = express()
 const server = http.createServer()
-const socket = socketio(server,{
+const io = socketio(server,{
     cors : {
-        origin : "http://localhost:3000"
+        origin : "http://localhost:5173"
     }
 })
 const port = process.env.PORT
@@ -18,11 +18,36 @@ const port = process.env.PORT
 //     res.status(200).send("The server is running");
 // })
 
-socket.on("connection",(soc) => {
-    soc.on("message",(data)  => {
-        console.log(data);
+let dashboard = [];
+
+io.on("connection",(socket) => {
+    socket.on('scores',(data)  => {
+        dashboard.push({...data, id: socket.id});
+        socket.emit('dashboard', dashboard);
+        setInterval(() => {
+            socket.emit('dashboard', dashboard);
+        },5000)
     })
-    soc.emit("message","Hi, I am Dev!");
+    socket.on('del-scores',(data)  => {
+        dashboard = dashboard.filter((score) => {
+            return score.user!= data.user 
+        })
+        socket.emit('dashboard', dashboard);
+        setInterval(() => {
+            socket.emit('dashboard', dashboard);
+        },5000)
+    })
+    socket.on('put-scores',(data)  => {
+        dashboard.forEach((score) => {
+            if(score.user==data.user){
+                score.score=data.score;
+            }
+        })
+        socket.emit('dashboard', dashboard);
+        setInterval(() => {
+            socket.emit('dashboard', dashboard);
+        },5000)
+    })
 })
 
 server.listen(port,()=>{
